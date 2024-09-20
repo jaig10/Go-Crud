@@ -18,7 +18,10 @@ func ConnectDatabase () {
 		fmt.Println("Database Connected Successfully")
 	}
 
-    database.AutoMigrate(&Post{})  // register Post model
+    database.AutoMigrate(&Post{}) 
+    database.AutoMigrate(&User{}) 
+
+	 // register Post model
 
     DB = database
 }

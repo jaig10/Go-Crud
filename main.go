@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/jaig10/go-crud/models"
 	"github.com/jaig10/go-crud/controllers"
+	"github.com/jaig10/go-crud/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,10 @@ func main(){
 	// USER ROUTES
 	router.POST("/register", controllers.Register)
 	router.POST("/login", controllers.Login)
-	router.GET("/all-users", controllers.AllUsers)
+
+	protectedRoutes := router.Group("/")
+	protectedRoutes.Use(middlewares.Authenticate)
+	protectedRoutes.GET("/all-users", controllers.AllUsers)
 
 
 	router.Run("localhost:8080")

@@ -7,11 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-   "github.com/golang-jwt/jwt/v4"
-   "time"
+   "github.com/golang-jwt/jwt/v5"
+//    "time"
+   "fmt"
 )
 
-var jwtKey = []byte("secretkey")
+var JwtKey = []byte("secretkey")
 
 
 func Register(c *gin.Context){
@@ -28,7 +29,7 @@ func Register(c *gin.Context){
 	newUser := models.User{Username: user.Username, Password: user.Password}
 
 	models.DB.Create(&newUser)
-	c.JSON(http.StatusOK, gin.H{"data": "user added successfully"})
+	c.JSON(http.StatusOK, gin.H{"data": "user added successfully", "user": newUser })
 }
 
 //Login
@@ -48,14 +49,11 @@ func Login(c *gin.Context){
 		c.JSON(http.StatusUnauthorized, gin.H{"error":"Invalid password"})
 		return
 	}
-	token := jwt.New(jwt.SigningMethodEdDSA)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(30 * time.Minute)
-	claims["authorized"] = true
-	claims["user"] = "username"
-	tokenString, err := token.SignedString(jwtKey)
+	token := jwt.New(jwt.SigningMethodHS256) 
+	tokenString, err := token.SignedString(JwtKey)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error":"Error in making token"})
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error":"Error in making token", "err":err, "token": token, "tokenString":tokenString})
 		return
 	}
 
